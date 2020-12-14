@@ -4,6 +4,8 @@
 
 //todo if I'm currently in a meeting, I skip it, so fix that
 
+let calTitle = 'Calendar';
+
 let time = new DateFormatter();
 time.dateFormat = 'HH:mm';
 
@@ -21,7 +23,7 @@ let allEvents = await CalendarEvent.thisWeek(Calendar.Calendar);
 let events = '';
 let numMatches = 0;
 for (i=0; i<allEvents.length; i++) {  
-  if (allEvents[i].calendar.title == 'Calendar') {
+  if (allEvents[i].calendar.title == calTitle) {
     if (allEvents[i].availability == 'busy') {
       if (allEvents[i].startDate >= queryDate || (allEvents[i].startDate < queryDate && allEvents[i].endDate >= queryDate)) {
         events = events + time.string(allEvents[i].startDate) + ' - ' + allEvents[i].title.substring(0, 40) + '\n';
@@ -58,29 +60,4 @@ function createWidget(items) {
   authorsTxt.textColor = Color.black()
   authorsTxt.textOpacity = 0.8
   return w
-}
-  
-async function loadItems() {
-  let url = "https://macstories.net/feed/json"
-  let req = new Request(url)
-  let json = await req.loadJSON()
-  return json.items
-}
-
-function extractImageURL(item) {
-  let regex = /<img src="(.*)" alt="/
-  let html = item["content_html"]
-  let matches = html.match(regex)
-  if (matches && matches.length >= 2) {
-    return matches[1]
-  } else {
-    return null
-  }
-}
-
-function decode(str) {
-  let regex = /&#(\d+);/g
-  return str.replace(regex, (match, dec) => {
-    return String.fromCharCode(dec)
-  })
 }
